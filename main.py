@@ -1,5 +1,5 @@
 import numpy as np 
-#import cvxpy as cp
+import cvxpy as cp
 import copy
 action= ["UP", "LEFT", "DOWN", "RIGHT", "STAY", "SHOOT", "HIT", "CRAFT", "GATHER", "NONE"] 
 health=[0,25,50,75,100]
@@ -18,6 +18,7 @@ possibility={
     "D" : [[0.2,"R"],[0.8,"D"]],
     "R" : [[0.5,"D"],[0.5,"R"]] #this combination of RnD is shoot spot where you have to change ur reward function.
 }
+
 
 def getindex(arr):
     #print(arr, "is array passed")
@@ -170,11 +171,14 @@ def compute(state,stateindex):
     allvals[stateindex]=state_array
 
 
+
 def compute_x(index):
     x_state=[]
     for stateform in allvals[index]:
             x_state.append(stateform[0])
     x_arr[index]=x_state                  
+
+
 
 def compute_r(index):
     r_state=[]
@@ -182,14 +186,37 @@ def compute_r(index):
             r_state.append(stateform[1])
     r_arr[index]=r_state  
 
+
+
 def compute_alpha(index):
     if index==startindex:
         alpha_arr[index]=1
     else:
-        alpha_arr[index]=0        
+        alpha_arr[index]=0    
+
+
+
+def compute_A(col):
+    global A
+    A=[[0 for i in range(col)]for j in range(600)]
+    column=0
+    ind=0
+    for states in allvals:
+        for acts in states:   #each act corresponds to each column
+            A[ind][column]+=1  
+            #change values of consequences
+            if acts[0]!="NONE":
+                for cons in acts[2]:
+                    A[getindex(cons[0])][column]-=cons[1]
+            column+=1  
+        ind+=1
+
+
+
+
 
 x_arr=[[]for i in range(600)]
-r_arr=[[]for i in range(600)]
+r_arr=[0 for i in range(600)]
 alpha_arr=[[]for i in range(600)]
 allvals=[[] for i in range(600)]  #[0]will later have next [action ,reward, [consquence,probab]] such n arrays of state i in an array of array format
 juststates=[]
@@ -206,6 +233,7 @@ for a1 in pos:
                     compute([a1,a2,a3,a4,a5],count)                  
                     count+=1
 
+count=0
 startindex=getindex(["C",2,3,'R',100])
 for a1 in pos:
     for a2 in mat:
@@ -215,9 +243,29 @@ for a1 in pos:
                     compute_x(count)
                     compute_r(count)
                     compute_alpha(count) 
-print(x_arr)
+                    count+=1
+
+#print(x_arr)
 tot=0
 for stateform in allvals:
     tot+=len(stateform)
     #print(tot)
+compute_A(tot)    
   
+#library usage
+x = cp.Variable(shape=(tot,1), name="x") 
+r=[]
+for vals in r_arr:
+    for val in vals:
+        r.append(val)
+r=np.array(r)        
+A=np.array(A)
+constraints=[]
+for i in range(600):
+    constraints+= [ 
+    cp.matmul(A[i], x) == alpha_arr[i], x>=0]
+
+objective=cp.Maximize(cp.matmul(r,x))
+problem = cp.Problem(objective, constraints)
+solution = problem.solve()
+print(solution)
