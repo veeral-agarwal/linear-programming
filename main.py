@@ -258,7 +258,8 @@ r=[]
 for vals in r_arr:
     for val in vals:
         r.append(val)
-r=np.array(r)        
+r=np.array(r) 
+B=copy.deepcopy(A)       
 A=np.array(A)
 constraints=[]
 for i in range(600):
@@ -269,3 +270,31 @@ objective=cp.Maximize(cp.matmul(r,x))
 problem = cp.Problem(objective, constraints)
 solution = problem.solve()
 print(solution)
+arr1 = list(x.value)
+l = [ float(val) for val in arr1]
+
+state_action_pair=[]
+left=0
+right=0
+loop=0
+for vals in x_arr:
+    right+=len(vals)
+    tempar=l[left:right]
+    actss=vals[tempar.index(max(tempar))]
+    statess=juststates[loop]
+    loop+=1
+    left=right
+    state_action_pair.append([statess,actss])
+print(len(state_action_pair))    
+
+output={
+    "a":B,
+    "r":r,
+    "alpha": alpha_arr,
+    "x": l,
+    "policy":state_action_pair,
+    "objective":solution
+}
+#todo in output r is np array make it list (initally it was list, get a deepcopy of it)
+#todo state_action pair has 'S' for state it should be S and 
+print(output)
