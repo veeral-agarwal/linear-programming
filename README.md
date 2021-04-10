@@ -12,4 +12,6 @@ First we make x,R,A arrays then we try to maximise Rx given constraints Ax =alph
 Since we don't have reward for hitting MM , Indiana would prefer to take movement/stay actions and stay away from MM when MM is in ready state.This matches with policy.Most of the actions are STAY,or GATHER,CRAFT for South and North position as moving to center is riskier as we might get hit by MM causing negative reward.
 
 ## Multiple policies:
-	
+* There can be multiple policies, if values of x are same for single action then we can choose any one among them, resulting in multiple policies.This won't show any affect on A,r and alpha.
+* Secondly, we are using fixed start state, we can change i.e, change values of alpha array then the policy changes. It would still not show any effect on A or R array. Introducing rewards changes.
+* introducing final rewrads changes R array, this change also can make policy change.
