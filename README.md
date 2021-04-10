@@ -4,7 +4,7 @@
 
 For each state increment its value by 1 (outgoing edges) for a given action (column), then take all the consequences and for all the consequences (rows in A matrix) subtract the probability it occurring if this action is taken(in this column)(incoming edges for those states).So if this action itself is a consequence it will get subtracted from itself, accommodating self loops.
 
-## Procedure of finding policy and analysis
+## Procedure of finding policy :
 First we make x,R,A arrays then we try to maximise Rx given constraints Ax =alpha using cvxpy library.Return value would be the values of x array.Then for a state, we choose action with maximum value.We do this for all states and map states to actions to build the policy.
 
 
