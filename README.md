@@ -1,4 +1,6 @@
-# linear-programming
+# linear-programming 
+
+(part 3 in pdf)
 
 ## Procedure of making A
 
