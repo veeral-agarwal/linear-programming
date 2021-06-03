@@ -1,4 +1,4 @@
-# linear-programming (Markov-Decision-Processes)
+# linear-programming (Markov Decision Processes)
 done as an assignment in Machinen Data and Learning course, MDL | Spring 2021
 
 (part 3 in pdf)
